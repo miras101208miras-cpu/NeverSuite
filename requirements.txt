@@ -1,0 +1,9 @@
+﻿customtkinter>=6.0.0
+Pillow>=10.0.0
+keyboard>=0.13.5
+psutil>=5.9.0
+pycaw>=20260927
+comtypes>=1.4.0
+qrcode>=8.0
+pystray>=0.19.5
+windnd>=1.0.3

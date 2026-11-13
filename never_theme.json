@@ -1,0 +1,13 @@
+{
+  "theme": "sakura",
+  "id": "sakura",
+  "name": "🌸 Tokyo Sakura Lo-Fi",
+  "accent": "#ff6b8b",
+  "accent_hover": "#fb7185",
+  "secondary": "#f472b6",
+  "bg": "#120c16",
+  "card_bg": "#1c1424",
+  "card_border": "#3b224c",
+  "text": "#fff1f2",
+  "text_muted": "#fbcfe8"
+}

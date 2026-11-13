@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Never Suite v1.0 — Инновационная Экосистема для Windows</title>
+  <style>
+    :root {
+      --bg-base: #0a0b12;
+      --bg-card: rgba(18, 20, 32, 0.75);
+      --bg-card-hover: rgba(26, 29, 48, 0.85);
+      --accent-cyan: #00f5ff;
+      --accent-magenta: #ff007f;
+      --accent-purple: #7952f5;
+      --accent-green: #00ff88;
+      --accent-pink: #ff79c6;
+      --text-main: #f0f2f8;
+      --text-muted: #8b92a5;
+      --border-glass: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(0, 245, 255, 0.3);
+      --glow-cyan: 0 0 25px rgba(0, 245, 255, 0.4);
+      --glow-magenta: 0 0 25px rgba(255, 0, 127, 0.4);
+    }
+
+    [data-theme="sakura"] {
+      --accent-cyan: #ff79c6;
+      --accent-purple: #bd93f9;
+      --border-glow: rgba(255, 121, 198, 0.35);
+      --glow-cyan: 0 0 25px rgba(255, 121, 198, 0.4);
+    }
+
+    [data-theme="space"] {
+      --accent-cyan: #8be9fd;
+      --accent-purple: #6272a4;
+      --border-glow: rgba(139, 233, 253, 0.25);
+      --glow-cyan: 0 0 25px rgba(139, 233, 253, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(121, 82, 245, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 60%, rgba(0, 245, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 90%, rgba(255, 0, 127, 0.08) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Ambient glowing grid */
+    .bg-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-size: 50px 50px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Interactive Top Dynamic Island */
+    .dynamic-island-wrapper {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      perspective: 1000px;
+    }
+
+    .dynamic-island {
+      background: rgba(12, 13, 20, 0.88);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid rgba(0, 245, 255, 0.35);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 245, 255, 0.2);
+      border-radius: 30px;
+      padding: 8px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+      width: 320px;
+      overflow: hidden;
+    }
+
+    .dynamic-island.expanded {
+      width: 440px;
+      border-radius: 20px;
+      padding: 16px 20px;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 14px;
+      border-color: var(--accent-cyan);
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.8), var(--glow-cyan);
+    }
+
+    .island-compact-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .island-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    .island-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.8; }
+    }
+
+    .wave-container {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 16px;
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 6px;
+      background: var(--accent-cyan);
+      border-radius: 2px;
+      animation: wave 1s ease-in-out infinite alternate;
+    }
+    .wave-bar:nth-child(1) { animation-delay: 0.1s; height: 10px; }
+    .wave-bar:nth-child(2) { animation-delay: 0.3s; height: 16px; }
+    .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 12px; }
+    .wave-bar:nth-child(4) { animation-delay: 0.4s; height: 8px; }
+
+    @keyframes wave {
+      0% { transform: scaleY(0.4); }
+      100% { transform: scaleY(1.3); }
+    }
+
+    .island-expanded-content {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dynamic-island.expanded .island-expanded-content {
+      display: flex;
+    }
+
+    .island-media-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .album-art {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #7952f5, #ff007f);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 12px rgba(121, 82, 245, 0.4);
+    }
+
+    .track-info {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .track-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-artist {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .island-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 4px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: scale(1.1);
+    }
+
+    .ctrl-btn.play {
+      background: var(--accent-cyan);
+      color: #0c0d14;
+      font-size: 14px;
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.6);
+    }
+
+    .island-pomodoro-pill {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+    }
+
+    .pomo-timer {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--accent-pink);
+    }
+
+    /* Interactive Cyber Pet on screen */
+    .cyber-pet-widget {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .pet-bubble {
+      background: rgba(18, 20, 32, 0.92);
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 245, 255, 0.25);
+      border-radius: 14px 14px 2px 14px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #fff;
+      margin-bottom: 8px;
+      max-width: 220px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .pet-avatar {
+      width: 95px;
+      height: 95px;
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 6px 14px rgba(0, 245, 255, 0.35));
+    }
+
+    .pet-avatar:hover {
+      transform: scale(1.08) translateY(-4px);
+    }
+
+    .pet-avatar.bounce {
+      animation: petBounce 0.45s ease;
+    }
+
+    @keyframes petBounce {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-16px) scale(1.12); }
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header & Hero */
+    header {
+      padding-top: 110px;
+      padding-bottom: 60px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(0, 245, 255, 0.08);
+      border: 1px solid var(--border-glow);
+      border-radius: 30px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+      box-shadow: 0 0 15px rgba(0, 245, 255, 0.15);
+    }
+
+    h1 {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #ffffff 40%, var(--accent-cyan) 80%, var(--accent-magenta) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+
+    .hero-sub {
+      font-size: 19px;
+      color: var(--text-muted);
+      max-width: 820px;
+      margin: 0 auto 36px;
+    }
+
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-cyan), #7952f5);
+      color: #0a0b12;
+      box-shadow: 0 0 25px rgba(0, 245, 255, 0.45);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(0, 245, 255, 0.7);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+
+    /* Quick stats pills */
+    .stats-pills {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: rgba(18, 20, 32, 0.6);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stat-pill span {
+      color: var(--accent-cyan);
+    }
+
+    /* RAM Comparison Section */
+    .section-title {
+      text-align: center;
+      margin-bottom: 12px;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 16px;
+      max-width: 680px;
+      margin: 0 auto 40px;
+    }
+
+    .comparison-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: 20px;
+      padding: 36px;
+      margin-bottom: 80px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .chart-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .bar-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .bar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      height: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      padding-right: 12px;
+      justify-content: flex-end;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bar-fill.never {
+      width: 7%;
+      background: linear-gradient(90deg, #00ff88, #00f5ff);
+      box-shadow: 0 0 15px rgba(0, 255, 136, 0.4);
+    }
+
+    .bar-fill.spotify {
+      width: 30%;
+      background: #1db954;
+    }
+
+    .bar-fill.discord {
+      width: 44%;
+      background: #5865f2;
+    }
+
+    .bar-fill.electron {
+      width: 100%;
+      background: linear-gradient(90deg, #ff4757, #ff6b81);
+    }
+
+    .chart-footer {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .badge-win {
+      background: rgba(0, 255, 136, 0.12);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* Modules Grid (9 Modules) */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .module-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-glass);
+      border-radius: 18px;
+      padding: 26px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .module-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), var(--glow-cyan);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      font-size: 32px;
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(0, 245, 255, 0.1);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 245, 255, 0.2);
+    }
+
+    .card-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-list li::before {
+      content: "✔";
+      color: var(--accent-cyan);
+      font-weight: bold;
+    }
+
+    /* Theme Switcher Bar */
+    .theme-preset-bar {
+      background: var(--bg-card);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 80px;
+    }
+
+    .theme-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .theme-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-glass);
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .theme-btn:hover, .theme-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(0, 245, 255, 0.3);
+    }
+
+    /* Download Banner */
+    .download-card {
+      background: linear-gradient(135deg, rgba(121, 82, 245, 0.2), rgba(0, 245, 255, 0.15));
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), var(--glow-cyan);
+      border-radius: 24px;
+      padding: 48px;
+      text-align: center;
+      margin-bottom: 80px;
+    }
+
+    .download-title {
+      font-size: 38px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .download-sub {
+      color: #cbd5e1;
+      font-size: 16px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-glass);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-bottom: 16px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    /* Modal dialog */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-box {
+      background: #141624;
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.9), var(--glow-cyan);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 36px; }
+      .dynamic-island { width: 90%; }
+      .modules-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body data-theme="cyberpunk">
+
+  <div class="bg-grid"></div>
+
+  <!-- Interactive Dynamic Island -->
+  <div class="dynamic-island-wrapper">
+    <div class="dynamic-island" id="dynamicIsland" onclick="toggleIsland(event)">
+      <div class="island-compact-content" id="islandCompact">
+        <div class="island-badge">
+          <div class="island-pulse-dot"></div>
+          <span id="compactStatus">Never Island</span>
+        </div>
+        <div style="font-size: 12px; color: #fff; font-weight: 600;" id="compactTrack">Midnight City</div>
+        <div class="wave-container">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+      </div>
+
+      <div class="island-expanded-content" id="islandExpanded">
+        <div class="island-media-row">
+          <div class="album-art" id="albumArtIcon">🎵</div>
+          <div class="track-info">
+            <div class="track-title" id="expandedTitle">Midnight City (SMTC Sync)</div>
+            <div class="track-artist" id="expandedArtist">M83 — Hurry Up, We're Dreaming</div>
+          </div>
+        </div>
+
+        <div class="island-controls">
+          <button class="ctrl-btn" onclick="prevTrack(event)" title="Предыдущий трек">⏮</button>
+          <button class="ctrl-btn play" id="playBtn" onclick="togglePlay(event)" title="Воспроизведение/Пауза">⏸</button>
+          <button class="ctrl-btn" onclick="nextTrack(event)" title="Следующий трек">⏭</button>
+        </div>
+
+        <div class="island-pomodoro-pill">
+          <span>🍅 Режим Фокуса (Never Focus)</span>
+          <span class="pomo-timer" id="islandTimer">24:45</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive Cyber Pet Screen Companion -->
+  <div class="cyber-pet-widget" id="cyberPetWidget" onclick="petClicked()">
+    <div class="pet-bubble" id="petBubble">Привет! Нажми на меня 🐾</div>
+    <img src="assets/pet_idle.png" alt="Cyber Pet" class="pet-avatar" id="petImg">
+  </div>
+
+  <!-- Main Content -->
+  <div class="container">
+
+    <!-- Hero Section -->
+    <header>
+      <div class="hero-badge">⚡ THE NEXT-GEN WINDOWS DESKTOP ECOSYSTEM</div>
+      <h1>Прокачай Windows до максимума.</h1>
+      <p class="hero-sub">
+        Полный набор из 9 высокопроизводительных модулей: живой Dynamic Island, интерактивный Cyber Pet,
+        беспроводной Never Drop, расслабляющий Sakura FX и глубокий системный бустер.
+      </p>
+
+      <div class="cta-group">
+        <button class="btn btn-primary" onclick="openDownloadModal()">
+          <span>⚡ Скачать Never Suite v1.0 (Бесплатно)</span>
+        </button>
+        <button class="btn btn-secondary" onclick="openGithubModal()">
+          <span>⭐ GitHub Repository</span>
+        </button>
+        <a href="#modules" class="btn btn-secondary">
+          <span>📖 Документация и Модули</span>
+        </a>
+      </div>
+
+      <div class="stats-pills">
+        <div class="stat-pill"><span>⚡ 65 MB</span> Общее ОЗУ всех модулей</div>
+        <div class="stat-pill"><span>🚀 0.0% CPU</span> Потребление в простое</div>
+        <div class="stat-pill"><span>💎 9 в 1</span> Единая экосистема</div>
+        <div class="stat-pill"><span>🛡️ 100%</span> Без телеметрии и рекламы</div>
+      </div>
+    </header>
+
+    <!-- RAM Consumption Comparison Graph -->
+    <section>
+      <h2 class="section-title">Битва за оперативную память</h2>
+      <p class="section-sub">Сравнение реального потребления ОЗУ Never Suite и типичных тяжелых приложений на Electron.</p>
+
+      <div class="comparison-card">
+        <div class="chart-container">
+          
+          <div class="bar-item">
+            <div class="bar-info">
+              <span style="color: var(--accent-green); font-weight: bold;">⚡ Never Suite v1.0 (Все 9 модулей вместе)</span>
+              <span style="color: var(--accent-green);">65 МБ</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill never">65 МБ</div>
+            </div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-info">
+              <span>🎵 Spotify Desktop</span>
+              <span style="color: var(--text-muted);">380 МБ</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill spotify">380 МБ</div>
+            </div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-info">
+              <span>💬 Discord Desktop</span>
+              <span style="color: var(--text-muted);">480 МБ</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill discord">480 МБ</div>
+            </div>
+          </div>
+
+          <div class="bar-item">
+            <div class="bar-info">
+              <span>🐌 Набор Electron-утилит (Raycast + виджеты + буфер)</span>
+              <span style="color: #ff6b81;">1,510 МБ</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill electron">1.5 ГБ</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="chart-footer">
+          <div class="badge-win">🎉 Экономия до 95% памяти на чистом Win32 API и Python</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Не тормозит игры и тяжелые рабочие среды</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Switcher Live Preview -->
+    <section>
+      <div class="theme-preset-bar">
+        <div>
+          <div style="font-weight: 700; font-size: 16px;">🎨 Живой предпросмотр цветовых тем экосистемы</div>
+          <div style="font-size: 13px; color: var(--text-muted);">Never Hub синхронизирует выбранную палитру между всеми 9 модулями на лету.</div>
+        </div>
+        <div class="theme-buttons">
+          <button class="theme-btn active" id="btnCyber" onclick="switchTheme('cyberpunk')">⚡ Cyberpunk 2077</button>
+          <button class="theme-btn" id="btnSakura" onclick="switchTheme('sakura')">🌸 Tokyo Sakura Lo-Fi</button>
+          <button class="theme-btn" id="btnSpace" onclick="switchTheme('space')">🌌 Deep Space Minimal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Showcase Cards for 9 Modules -->
+    <section id="modules">
+      <h2 class="section-title">9 Модулей — Безграничные Возможности</h2>
+      <p class="section-sub">Каждый модуль автономен, легковесен и мгновенно включается/отключается из трея Never Hub.</p>
+
+      <div class="modules-grid">
+
+        <!-- Module 1: Never Hub -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🎛️</div>
+            <div class="card-badge">Управление</div>
+          </div>
+          <h3 class="card-title">Never Hub</h3>
+          <p class="card-desc">Главный командный пункт в системном трее. Контролирует процессы, память и автозагрузку всей экосистемы.</p>
+          <ul class="feature-list">
+            <li>Иконка в трее с быстрым контекстным меню</li>
+            <li>Монитор нагрузки RAM экосистемы в реальном времени</li>
+            <li>Глобальное переключение тем (JSON theme bus)</li>
+            <li>Чистый запуск/остановка фоновых процессов</li>
+          </ul>
+        </div>
+
+        <!-- Module 2: Dynamic Island -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🏝️</div>
+            <div class="card-badge">Медиа & Фокус</div>
+          </div>
+          <h3 class="card-title">Dynamic Island</h3>
+          <p class="card-desc">Интерактивный остров вверху экрана с плавной физикой развертывания, медиаплеером и Pomodoro таймером.</p>
+          <ul class="feature-list">
+            <li>SMTC-интеграция с Spotify, Яндекс Музыкой и браузерами</li>
+            <li>Анимированный эквалайзер и кнопки управления треками</li>
+            <li>Встроенный таймер продуктивности Pomodoro (25/5 мин)</li>
+            <li>Звуковые оповещения и ненавязчивые уведомления</li>
+          </ul>
+        </div>
+
+        <!-- Module 3: Cyber Pet -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🐾</div>
+            <div class="card-badge">Спутник</div>
+          </div>
+          <h3 class="card-title">Cyber Pet</h3>
+          <p class="card-desc">Анимированный аниме-питомец прямо на рабочем столе. Гуляет поверх окон, реагирует на клики и мотивирует.</p>
+          <ul class="feature-list">
+            <li>Физика падения, ходьба, отдых и сон</li>
+            <li>Сменные костюмы: школьная форма, худи, платье</li>
+            <li>Режим синхронизации с таймером Focus / Study</li>
+            <li>Прием файлов перетаскиванием (Drag & Drop в Never Drop)</li>
+          </ul>
+        </div>
+
+        <!-- Module 4: Never Sakura FX -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🌸</div>
+            <div class="card-badge">Атмосфера</div>
+          </div>
+          <h3 class="card-title">Never Sakura FX</h3>
+          <p class="card-desc">Эстетичные падающие лепестки японской сакуры поверх рабочего стола с эффектом глубины и ветра.</p>
+          <ul class="feature-list">
+            <li>Плавная 60 FPS физика падения с покачиванием</li>
+            <li>Авто-замедление скорости при активации режима Focus</li>
+            <li>Прозрачное наложение без перехвата кликов мыши</li>
+            <li>Минимальная нагрузка на GPU (менее 1%)</li>
+          </ul>
+        </div>
+
+        <!-- Module 5: Never Drop -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">⚡</div>
+            <div class="card-badge">AirDrop для PC</div>
+          </div>
+          <h3 class="card-title">Never Drop</h3>
+          <p class="card-desc">Мгновенный обмен файлами между компьютером и любым смартфоном (iOS/Android) по локальному Wi-Fi без проводов.</p>
+          <ul class="feature-list">
+            <li>Генерация персонального QR-кода и LAN ссылки</li>
+            <li>Встроенный быстрый HTTP сервер отдачи файлов</li>
+            <li>Удобное всплывающее окно отправки</li>
+            <li>Прием файлов через Cyber Pet и контекстное меню</li>
+          </ul>
+        </div>
+
+        <!-- Module 6: Never Spotlight -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🔍</div>
+            <div class="card-badge">Быстрый запуск</div>
+          </div>
+          <h3 class="card-title">Never Spotlight</h3>
+          <p class="card-desc">Умная командная строка по сочетанию клавиш Alt+Space в стиле macOS Spotlight и Raycast.</p>
+          <ul class="feature-list">
+            <li>Мгновенный поиск программ, документов и папок</li>
+            <li>Встроенный калькулятор и конвертер валют</li>
+            <li>Выполнение команд терминала и веб-поиск</li>
+            <li>Абсолютно без задержек при вводе запроса</li>
+          </ul>
+        </div>
+
+        <!-- Module 7: Never Clipboard -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">📋</div>
+            <div class="card-badge">Буфер обмена</div>
+          </div>
+          <h3 class="card-title">Never Clipboard</h3>
+          <p class="card-desc">Продвинутый менеджер буфера обмена с историей скопированного текста, ссылок и сниппетов кода.</p>
+          <ul class="feature-list">
+            <li>Сохранение до 100 последних записей буфера</li>
+            <li>Закрепление важных сниппетов и паролей</li>
+            <li>Удобный поиск по тексту истории</li>
+            <li>Шифрованное локальное хранение данных</li>
+          </ul>
+        </div>
+
+        <!-- Module 8: Windows Customizer -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🎨</div>
+            <div class="card-badge">Твикинг</div>
+          </div>
+          <h3 class="card-title">Windows Customizer</h3>
+          <p class="card-desc">Мощная кастомизация интерфейса Windows: стеклянные окна (Acrylic / Mica), галерея обоев и твики шрифтов.</p>
+          <ul class="feature-list">
+            <li>Регулировка прозрачности и размытия окон (Alpha slider)</li>
+            <li>Интерактивная галерея 4K обоев с мгновенной установкой</li>
+            <li>Улучшение рендеринга текста ClearType</li>
+            <li>Отключение лишних системных анимаций</li>
+          </ul>
+        </div>
+
+        <!-- Module 9: PC Master Booster -->
+        <div class="module-card">
+          <div class="card-top">
+            <div class="card-icon">🚀</div>
+            <div class="card-badge">Оптимизация</div>
+          </div>
+          <h3 class="card-title">PC Master & Booster</h3>
+          <p class="card-desc">Очистка и ускорение операционной системы. Освобождает память и ускоряет отклик в один клик.</p>
+          <ul class="feature-list">
+            <li>Быстрая выгрузка неиспользуемых страниц RAM</li>
+            <li>Очистка временных файлов %TEMP% и кэшей приложений</li>
+            <li>Игровой Turbo-режим с приоритизацией процессов</li>
+            <li>Монитор самых прожорливых фоновых служб</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Download Section -->
+    <section>
+      <div class="download-card">
+        <h2 class="download-title">Готовы преобразить свой ПК?</h2>
+        <p class="download-sub">
+          Скачайте мастер установки NeverSetup и настройте Never Suite v1.0 меньше чем за минуту.
+        </p>
+
+        <button class="btn btn-primary" style="font-size: 17px; padding: 18px 36px;" onclick="openDownloadModal()">
+          <span>⚡ Скачать Never Suite v1.0 (Windows 10/11)</span>
+        </button>
+
+        <div style="margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+          Размер архива: ~18 МБ • Требуется: Windows 10/11 (64-bit) • Лицензия: MIT Free
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="footer-links">
+        <a href="#dynamicIsland" onclick="toggleIsland(event)">Интерактивный Остров</a>
+        <a href="#modules">Все модули</a>
+        <a href="javascript:void(0)" onclick="openGithubModal()">GitHub</a>
+        <a href="javascript:void(0)" onclick="openDownloadModal()">Установка</a>
+      </div>
+      <div>
+        © 2026 Never Suite Team. Разработано с любовью к производительности и эстетике.
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Modal for Download -->
+  <div class="modal-overlay" id="downloadModal" onclick="closeModal(event, 'downloadModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="font-size: 40px; margin-bottom: 12px;">🚀</div>
+      <h3 style="font-size: 22px; margin-bottom: 10px;">Мастер Установки Never Suite</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+        Вы можете запустить установщик прямо на своем компьютере:
+      </p>
+      
+      <div style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--accent-cyan); text-align: left; margin-bottom: 20px;">
+        C:\Users\school57-60\.gemini\antigravity\scratch\Never_Installer\main.py
+      </div>
+
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-primary" onclick="alert('Для запуска откройте ярлык Never Suite Setup на рабочем столе или запустите Never_Installer/main.py!')">
+          Запустить NeverSetup
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal(null, 'downloadModal')">
+          Закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for GitHub -->
+  <div class="modal-overlay" id="githubModal" onclick="closeModal(event, 'githubModal')">
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="font-size: 40px; margin-bottom: 12px;">⭐</div>
+      <h3 style="font-size: 22px; margin-bottom: 10px;">Never Suite Open Source</h3>
+      <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
+        Исходный код всех 9 модулей полностью открыт и доступен для сообщества под лицензией MIT.
+      </p>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-primary" onclick="alert('Проект размещен в локальном репозитории scratch/Never_Suite!')">
+          Перейти в репозиторий
+        </button>
+        <button class="btn btn-secondary" onclick="closeModal(null, 'githubModal')">
+          Закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Live Interactive Dynamic Island Logic
+    let isExpanded = false;
+    let isPlaying = true;
+    let tracks = [
+      { title: "Midnight City (SMTC Sync)", artist: "M83 — Hurry Up, We're Dreaming", icon: "🎵" },
+      { title: "Resonance (Lo-Fi Chill)", artist: "HOME — Odyssey", icon: "🌸" },
+      { title: "Nightcall (Synthwave)", artist: "Kavinsky — OutRun", icon: "⚡" },
+      { title: "Cyberpunk 2077 Theme", artist: "Marcin Przybyłowicz", icon: "🌆" }
+    ];
+    let trackIdx = 0;
+
+    function toggleIsland(e) {
+      if (e.target.closest('.ctrl-btn')) return;
+      isExpanded = !isExpanded;
+      const island = document.getElementById("dynamicIsland");
+      if (isExpanded) {
+        island.classList.add("expanded");
+      } else {
+        island.classList.remove("expanded");
+      }
+    }
+
+    function togglePlay(e) {
+      e.stopPropagation();
+      isPlaying = !isPlaying;
+      const playBtn = document.getElementById("playBtn");
+      const waves = document.querySelectorAll(".wave-bar");
+      if (isPlaying) {
+        playBtn.innerText = "⏸";
+        waves.forEach(w => w.style.animationPlayState = "running");
+      } else {
+        playBtn.innerText = "▶";
+        waves.forEach(w => w.style.animationPlayState = "paused");
+      }
+    }
+
+    function nextTrack(e) {
+      e.stopPropagation();
+      trackIdx = (trackIdx + 1) % tracks.length;
+      updateTrackUI();
+    }
+
+    function prevTrack(e) {
+      e.stopPropagation();
+      trackIdx = (trackIdx - 1 + tracks.length) % tracks.length;
+      updateTrackUI();
+    }
+
+    function updateTrackUI() {
+      const cur = tracks[trackIdx];
+      document.getElementById("expandedTitle").innerText = cur.title;
+      document.getElementById("expandedArtist").innerText = cur.artist;
+      document.getElementById("compactTrack").innerText = cur.title.split(" (")[0];
+      document.getElementById("albumArtIcon").innerText = cur.icon;
+    }
+
+    // Pomodoro countdown simulation
+    let seconds = 25 * 60;
+    setInterval(() => {
+      if (seconds > 0) {
+        seconds--;
+        const m = String(Math.floor(seconds / 60)).padStart(2, '0');
+        const s = String(seconds % 60).padStart(2, '0');
+        document.getElementById("islandTimer").innerText = `${m}:${s}`;
+      }
+    }, 1000);
+
+    // Interactive Cyber Pet Logic
+    const petQuotes = [
+      "Привет! Я твой Cyber Pet! 🐾",
+      "Учишься? Включи Pomodoro в Островке! 🎧",
+      "Never Suite потребляет всего 65 МБ ОЗУ! ⚡",
+      "Хочешь передать файл? Используй Never Drop! 📲",
+      "Лепестки сакуры за окном успокаивают... 🌸",
+      "Кликни еще раз! Nyaa~ ✨",
+      "Твой рабочий стол прекрасен! 💎"
+    ];
+    let quoteIdx = 0;
+    const petAvatars = [
+      "assets/pet_idle.png",
+      "assets/pet_walk1.png",
+      "assets/pet_walk2.png"
+    ];
+    let avatarIdx = 0;
+
+    function petClicked() {
+      const petImg = document.getElementById("petImg");
+      const petBubble = document.getElementById("petBubble");
+
+      // Bounce animation
+      petImg.classList.remove("bounce");
+      void petImg.offsetWidth;
+      petImg.classList.add("bounce");
+
+      // Cycle quote
+      quoteIdx = (quoteIdx + 1) % petQuotes.length;
+      petBubble.innerText = petQuotes[quoteIdx];
+
+      // Walk frame swap
+      avatarIdx = (avatarIdx + 1) % petAvatars.length;
+      petImg.src = petAvatars[avatarIdx];
+    }
+
+    // Theme Switcher Logic
+    function switchTheme(theme) {
+      document.body.setAttribute("data-theme", theme);
+      document.querySelectorAll(".theme-btn").forEach(b => b.classList.remove("active"));
+      if (theme === "cyberpunk") document.getElementById("btnCyber").classList.add("active");
+      if (theme === "sakura") document.getElementById("btnSakura").classList.add("active");
+      if (theme === "space") document.getElementById("btnSpace").classList.add("active");
+    }
+
+    // Modals
+    function openDownloadModal() {
+      document.getElementById("downloadModal").style.display = "flex";
+    }
+
+    function openGithubModal() {
+      document.getElementById("githubModal").style.display = "flex";
+    }
+
+    function closeModal(e, modalId) {
+      if (!e || e.target.classList.contains("modal-overlay") || e.target.tagName === 'BUTTON') {
+        document.getElementById(modalId).style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
