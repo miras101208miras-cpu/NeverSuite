@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -823,7 +823,7 @@
         <button class="btn btn-primary" onclick="openDownloadModal()">
           <span>⚡ Скачать Never Suite v1.0 (Бесплатно)</span>
         </button>
-        <button class="btn btn-secondary" onclick="openGithubModal()">
+        <a href="https://github.com/miras101208miras-cpu/NeverSuite" target="_blank" class="btn btn-secondary" style="text-decoration:none;">
           <span>⭐ GitHub Repository</span>
         </button>
         <a href="#modules" class="btn btn-secondary">
@@ -1088,7 +1088,7 @@
       <div class="footer-links">
         <a href="#dynamicIsland" onclick="toggleIsland(event)">Интерактивный Остров</a>
         <a href="#modules">Все модули</a>
-        <a href="javascript:void(0)" onclick="openGithubModal()">GitHub</a>
+        <a href="https://github.com/miras101208miras-cpu/NeverSuite" target="_blank">GitHub</a>
         <a href="javascript:void(0)" onclick="openDownloadModal()">Установка</a>
       </div>
       <div>
@@ -1100,21 +1100,33 @@
 
   <!-- Modal for Download -->
   <div class="modal-overlay" id="downloadModal" onclick="closeModal(event, 'downloadModal')">
-    <div class="modal-box" onclick="event.stopPropagation()">
-      <div style="font-size: 40px; margin-bottom: 12px;">🚀</div>
-      <h3 style="font-size: 22px; margin-bottom: 10px;">Мастер Установки Never Suite</h3>
+    <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 520px;">
+      <div style="font-size: 44px; margin-bottom: 12px;">⚡</div>
+      <h3 style="font-size: 24px; margin-bottom: 8px; font-weight: 800;">Скачать Never Suite v1.0</h3>
       <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 20px;">
-        Вы можете запустить установщик прямо на своем компьютере:
+        Официальный Community-релиз для Windows 10 / 11 (64-bit). Полный комплект из 9 модулей, лаунчера Never Hub и тем оформления.
       </p>
       
-      <div style="background: rgba(0,0,0,0.4); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; color: var(--accent-cyan); text-align: left; margin-bottom: 20px;">
-        C:\Users\school57-60\.gemini\antigravity\scratch\Never_Installer\main.py
+      <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+        <a href="downloads/NeverSuite-v1.0-Release.zip" download="NeverSuite-v1.0-Release.zip" class="btn btn-primary" style="text-decoration:none; justify-content:center; padding: 16px;">
+          <span>⚡ Прямое скачивание ZIP (5.2 МБ)</span>
+        </a>
+        <a href="https://github.com/miras101208miras-cpu/NeverSuite/releases/download/v1.0.0/NeverSuite-v1.0-Release.zip" target="_blank" class="btn btn-secondary" style="text-decoration:none; justify-content:center; padding: 14px;">
+          <span>📦 Скачать с GitHub Releases v1.0.0</span>
+        </a>
+        <a href="https://github.com/miras101208miras-cpu/NeverSuite" target="_blank" class="btn btn-secondary" style="text-decoration:none; justify-content:center; padding: 14px;">
+          <span>⭐ Открыть исходный код на GitHub</span>
+        </a>
       </div>
 
-      <div style="display: flex; gap: 10px; justify-content: center;">
-        <button class="btn btn-primary" onclick="alert('Для запуска откройте ярлык Never Suite Setup на рабочем столе или запустите Never_Installer/main.py!')">
-          Запустить NeverSetup
-        </button>
+      <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--border-color); border-radius: 8px; padding: 14px; font-size: 13px; color: #94a3b8; text-align: left; margin-bottom: 20px; line-height: 1.6;">
+        <b style="color: #f1f5f9;">🚀 Быстрый старт после скачивания:</b><br>
+        1. Распакуйте архив в любую папку<br>
+        2. Запустите <b>Start_Never_Hub.bat</b> (или <b>Install_Never_Suite.bat</b>)<br>
+        3. Наслаждайтесь киберпанк-экосистемой с потреблением ~65 МБ ОЗУ!
+      </div>
+
+      <div style="display: flex; justify-content: flex-end;">
         <button class="btn btn-secondary" onclick="closeModal(null, 'downloadModal')">
           Закрыть
         </button>
